@@ -10,7 +10,7 @@ import { BiMoon } from "react-icons/bi";
 export const SideNav: FC = () => {
   const { setTheme, theme } = useTheme();
   return (
-    <nav className="p-2 gap-2 flex flex-col border-r bg-white dark:bg-black border-r-black/20 dark:border-r-white/25 fixed h-screen">
+    <nav className="p-2 gap-2 flex flex-col border-r bg-white dark:bg-black border-r-black/20 dark:border-r-white/25 fixed top-0 h-screen z-[100]">
       <NavButton href="/" icon={RiHome2Line} />
       <NavButton href="/projects" icon={FiCode} />
       <div className="flex-1" />

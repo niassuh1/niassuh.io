@@ -1,8 +1,19 @@
-import type { NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import { Me } from "../components/me";
+import path from "path";
+import fs from "fs";
+import { remark } from "remark";
+import html from "remark-html";
+import matter from "gray-matter";
+import { SkillItem } from "../components/skill-item";
+import { SkillList } from "../components/skill-list";
 
-const Home: NextPage = () => {
+interface HomeProps {
+  source: any;
+}
+
+const Home: NextPage<HomeProps> = ({ source }) => {
   return (
     <div className="p-3 space-y-3">
       <Head>
@@ -11,12 +22,66 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Me />
-      <div className="bg-black/10 dark:bg-white/10 w-full p-3">
-        <p>## Title</p>
-        <p># Heading 2</p>
+      <div className="bg-black/[5%] dark:bg-white/10 w-full p-3">
+        <h1 className="text-md my-2">bio.md</h1>
+        <hr className="border-black/20 dark:border-white/30 my-2" />
+        <article
+          dangerouslySetInnerHTML={{ __html: source }}
+          className="prose-sm prose-h1:mb-1 dark:prose-invert font-sans"
+        ></article>
+      </div>
+
+      <div className="space-y-6">
+        <section>
+          <h1 className="text-2xl font-bold">🎓 Education</h1>
+          <SkillList>
+            <SkillItem
+              title="B.S Computer Science"
+              subtitle="King Fahd University of Petroleum & Minerals"
+              description="2017-2023"
+            />
+          </SkillList>
+        </section>
+
+        <section>
+          <h1 className="text-2xl font-bold">🏨 Professional Experience</h1>
+          <SkillList>
+            <SkillItem
+              title="Web Engineer, UI Designer"
+              subtitle="Axenda"
+              description="2021 - Present"
+            />
+
+            <SkillItem
+              title="COOP Trainee"
+              subtitle="The Family Office"
+              description="Jan 2022 - Aug 2022"
+            />
+
+            <SkillItem
+              title="Freelancer Web Developer, UI Designer"
+              subtitle="U.PICK"
+              description="2020"
+            />
+          </SkillList>
+        </section>
       </div>
     </div>
   );
+};
+
+export const getStaticProps: GetStaticProps = async () => {
+  const filePath = path.resolve("md", "bio.md");
+
+  const fileMarkdown = fs.readFileSync(filePath, "utf-8");
+  const matterContent = matter(fileMarkdown);
+  const source = await remark().use(html).process(matterContent.content);
+
+  return {
+    props: {
+      source: source.toString(),
+    },
+  };
 };
 
 export default Home;
